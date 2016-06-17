@@ -3,7 +3,7 @@ use warnings FATAL => 'all';
 use 5.006;
 
 my %META = (
-  name => 'Moo',
+  name => 'Sub-Quote',
   license => 'perl_5',
   prereqs => {
     configure => { requires => {
@@ -16,100 +16,44 @@ my %META = (
         'Test::More'  => 0.94,
         'Test::Fatal' => 0.003,
       },
-      recommends => {
-        'CPAN::Meta' => 0,
-        'CPAN::Meta::Requirements' => 0,
-      },
     },
     runtime => {
       requires => {
-        'Class::Method::Modifiers'  => 1.10,  # for RT#80194
-        'Module::Runtime'           => 0.014, # for RT#86394
-        'Role::Tiny'                => 2.000004,
-        'Devel::GlobalDestruction'  => 0.11,  # for RT#78617
         'Scalar::Util'              => 0,
         'perl'                      => 5.006,
-        'Exporter'                  => 5.57,  # Import 'import'
       },
       recommends => {
-        'Class::XSAccessor'         => 1.18,
         'Sub::Name'                 => 0.08,
-        'strictures'                => 2,
       },
     },
     develop   => {
-      requires => {
-        'strictures' => 2,
-        'indirect' => 0,
-        'multidimensional' => 0,
-        'bareword::filehandles' => 0,
-        'Moose' => 0,
-        'Mouse' => 0,
-        'namespace::clean' => 0,
-        'namespace::autoclean' => 0,
-        'MooseX::Types::Common::Numeric' => 0,
-        'Type::Tiny' => 0,
-        'Class::Tiny' => 1.001,
-      },
+      requires => {},
     },
   },
   resources => {
     repository => {
-      url => 'https://github.com/moose/Moo.git',
-      web => 'https://github.com/moose/Moo',
+      url => 'https://github.com/moose/Sub-Quote.git',
+      web => 'https://github.com/moose/Sub-Quote',
       type => 'git',
     },
     x_IRC => 'irc://irc.perl.org/#moose',
     bugtracker => {
-      web => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Moo',
-      mailto => 'bug-Moo@rt.cpan.org',
+      web => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Sub-Quote',
+      mailto => 'bug-Sub-Quote@rt.cpan.org',
     },
     license => [ 'http://dev.perl.org/licenses/' ],
   },
   no_index => {
     directory => [ 't', 'xt' ]
   },
-  x_breaks => {
-    'HTML::Restrict'            => '== 2.1.5',
-    'MySQL::Workbench::Parser'  => '<= 0.05',
-    'MooX::Emulate::Class::Accessor::Fast' => '<= 0.02',
-    'WebService::Shutterstock'  => '<= 0.006',
-    'File::DataClass'           => '<= 0.54.1',
-    'App::Commando'             => '<= 0.012',
-  },
   x_authority => 'cpan:MSTROUT',
-  x_cpants => { ignore => {
-    use_strict => 'internal module used to apply strict',
-    use_warnings => 'internal module used to apply warnings',
-  } },
 );
 
 my %MM_ARGS = (
   PREREQ_PM => {
     ("$]" >= 5.008_000 ? () : ('Task::Weaken' => 0)),
-    ("$]" >= 5.010_000 ? () : ('MRO::Compat' => 0)),
   },
 );
-
-{
-  package MY;
-
-  sub test_via_harness {
-    my($self, $perl, $tests) = @_;
-    $perl .= ' -I'.$self->catdir('t','lib').' "-MTestEnv=$(MOO_TEST_ENV)"';
-    return $self->SUPER::test_via_harness($perl, $tests);
-  }
-
-  sub postamble {
-    my $MOO_TEST_ENV = !-f 'META.yml' ? "MOO_FATAL_WARNINGS" : '';
-    <<"POSTAMBLE";
-MOO_TEST_ENV=$MOO_TEST_ENV
-fulltest: test test_no_xs
-test_no_xs: pure_all
-\t\$(NOECHO)\$(MAKE) test MOO_TEST_ENV="\$(MOO_TEST_ENV),MOO_XS_DISABLE"
-POSTAMBLE
-  }
-}
 
 ## BOILERPLATE ###############################################################
 require ExtUtils::MakeMaker;

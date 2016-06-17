@@ -1,4 +1,5 @@
-use Moo::_strictures;
+use strict;
+use warnings;
 use Test::More;
 use Test::Fatal;
 use Sub::Defer qw(defer_sub undefer_sub undefer_all undefer_package);

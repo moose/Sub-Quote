@@ -1,14 +1,14 @@
-Moo
+Sub::Quote
 ===
-Moo is a minimalist Object Orientation system for Perl 5 that aims to be fully
-interoperable with Moose.
+Sub::Quote is used for generation of subs via string eval.  This includes
+allowing for closed over variables and inlining.  Used heavily by Moo for code
+generation.
 
-  * [Moo on CPAN](https://metacpan.org/pod/Moo) contains the main documentation
-  * [Role::Tiny on CPAN](https://metacpan.org/pod/Role::Tiny)
-  * [Moose on CPAN](https://metacpan.org/pod/Moose)
+  * [Sub::Quote on CPAN](https://metacpan.org/pod/Sub::Quote) contains the main documentation
+  * [Moo on CPAN](https://metacpan.org/pod/Moo) contains the Moo documentation
 
 --------
-[![Travis Build Status](https://travis-ci.org/moose/Moo.png?branch=master)](https://travis-ci.org/moose/Moo)
-[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/github/moose/Moo?branch=master&svg=true)](https://ci.appveyor.com/project/moose/moo/branch/master)
-[![Coverage Status](http://codecov.io/github/moose/Moo/coverage.svg?branch=master)](http://codecov.io/github/moose/Moo?branch=master)
-[![CPAN version](https://badge.fury.io/pl/Moo.svg)](https://metacpan.org/pod/Moo)
+[![Travis Build Status](https://travis-ci.org/moose/Sub-Quote.png?branch=master)](https://travis-ci.org/moose/Sub-Quote)
+[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/github/moose/Sub-Quote?branch=master&svg=true)](https://ci.appveyor.com/project/moose/sub-quote/branch/master)
+[![Coverage Status](http://codecov.io/github/moose/Sub-Quote/coverage.svg?branch=master)](http://codecov.io/github/moose/Sub-Quote?branch=master)
+[![CPAN version](https://badge.fury.io/pl/Sub-Quote.svg)](https://metacpan.org/pod/Sub-Quote)

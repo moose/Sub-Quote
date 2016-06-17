@@ -1,4 +1,5 @@
-use Moo::_strictures;
+use strict;
+use warnings;
 use lib 't/lib';
 use InlineModule
   'Sub::Name' => undef,

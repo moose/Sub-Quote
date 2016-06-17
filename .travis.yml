@@ -23,25 +23,7 @@ matrix:
       env: AUTHOR_TESTING=0
 sudo: false
 before_install:
-  - git clone git://github.com/travis-perl/helpers ~/travis-perl-helpers
-  - source ~/travis-perl-helpers/init
-  - build-perl
-  - perl -V
-  - build-dist
-  - cd $BUILD_DIR
-install:
-  - cpan-install ExtUtils::MakeMaker~6.68 git://github.com/moose/Role-Tiny
-  - cpan-install git://git.shadowcat.co.uk/p5sagit/strictures.git
-  - cpan-install --deps
-  - cpan-install --coverage
-before_script:
-  - coverage-setup
-script:
-  - export MOO_FATAL_WARNINGS=1
-  - prove -lv $(test-dirs)
-  - MOO_XS_DISABLE=1 prove -lv $(test-dirs)
-after_success:
-  - coverage-report
+  - eval $(curl https://travis-perl.github.io/init) --auto
 branches:
   except:
     - /^wip\//

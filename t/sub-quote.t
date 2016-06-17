@@ -10,7 +10,9 @@ BEGIN {
   }
 }
 
-use Moo::_strictures;
+use strict;
+use warnings;
+no warnings 'once';
 use Test::More;
 use Test::Fatal;
 

@@ -26,5 +26,3 @@ build: off
 
 test_script:
   - 'prove -lv t xt'
-  - 'set MOO_XS_DISABLE=1'
-  - 'prove -lv t xt'

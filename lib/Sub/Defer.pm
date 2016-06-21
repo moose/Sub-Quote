@@ -16,16 +16,14 @@ our %DEFERRED;
 sub _getglob { no strict 'refs'; \*{$_[0]} }
 
 BEGIN {
-  my ($su, $sn);
-  $su = $INC{'Sub/Util.pm'} && defined &Sub::Util::set_subname
-    or $sn = $INC{'Sub/Name.pm'}
-    or $su = eval { require Sub::Util; } && defined &Sub::Util::set_subname
-    or $sn = eval { require Sub::Name; };
-
-  *_subname = $su ? \&Sub::Util::set_subname
-            : $sn ? \&Sub::Name::subname
-            : sub { $_[1] };
-  *_CAN_SUBNAME = ($su || $sn) ? sub(){1} : sub(){0};
+  my $no_subname;
+  *_subname
+    = defined &Sub::Util::set_subname ? \&Sub::Util::set_subname
+    : defined &Sub::Name::subname     ? \&Sub::Util::subname
+    : (eval { require Sub::Util } && defined &Sub::Util::set_subname) ? \&Sub::Util::set_subname
+    : (eval { require Sub::Name } && defined &Sub::Name::subname    ) ? \&Sub::Util::subname
+    : ($no_subname = 1, sub { $_[1] });
+  *_CAN_SUBNAME = $no_subname ? sub(){0} : sub(){1};
 }
 
 sub _name_coderef {

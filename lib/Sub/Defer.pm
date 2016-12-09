@@ -19,9 +19,9 @@ BEGIN {
   my $no_subname;
   *_subname
     = defined &Sub::Util::set_subname ? \&Sub::Util::set_subname
-    : defined &Sub::Name::subname     ? \&Sub::Util::subname
+    : defined &Sub::Name::subname     ? \&Sub::Name::subname
     : (eval { require Sub::Util } && defined &Sub::Util::set_subname) ? \&Sub::Util::set_subname
-    : (eval { require Sub::Name } && defined &Sub::Name::subname    ) ? \&Sub::Util::subname
+    : (eval { require Sub::Name } && defined &Sub::Name::subname    ) ? \&Sub::Name::subname
     : ($no_subname = 1, sub { $_[1] });
   *_CAN_SUBNAME = $no_subname ? sub(){0} : sub(){1};
 }

@@ -5,7 +5,7 @@ use Exporter qw(import);
 use Scalar::Util qw(weaken);
 use Carp qw(croak);
 
-our $VERSION = '2.003000';
+our $VERSION = '2.003001';
 $VERSION = eval $VERSION;
 
 our @EXPORT = qw(defer_sub undefer_sub undefer_all);

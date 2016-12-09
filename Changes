@@ -1,5 +1,6 @@
 Revision history for Sub::Quote
 
+2.003001 - 2016-12-09
   - fix use of Sub::Name
 
 2.003000 - 2016-12-09

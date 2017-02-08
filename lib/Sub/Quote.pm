@@ -243,7 +243,7 @@ __END__
 
 =head1 NAME
 
-Sub::Quote - efficient generation of subroutines via string eval
+Sub::Quote - Efficient generation of subroutines via string eval
 
 =head1 SYNOPSIS
 

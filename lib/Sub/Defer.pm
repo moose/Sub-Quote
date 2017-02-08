@@ -151,7 +151,7 @@ __END__
 
 =head1 NAME
 
-Sub::Defer - defer generation of subroutines until they are first called
+Sub::Defer - Defer generation of subroutines until they are first called
 
 =head1 SYNOPSIS
 

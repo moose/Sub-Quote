@@ -227,8 +227,9 @@ sub unquote_sub {
         $e = $@;
       }
       unless ($success) {
-        my $line = '0000';
-        $make_sub =~ s/^(.)/@{[++$line]}: $1/mg;
+        my $space = length($make_sub =~ tr/\n//);
+        my $line = 0;
+        $make_sub =~ s/^/sprintf "%${space}d: ", ++$line/emg;
         croak "Eval went very, very wrong:\n\n${make_sub}\n\n$e";
       }
       weaken($QUOTED{$$unquoted} = $quoted_info);

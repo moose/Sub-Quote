@@ -24,7 +24,10 @@ use Sub::Quote qw(
   capture_unroll
   inlinify
   sanitize_identifier
+  quotify
 );
+
+use B;
 
 our %EVALED;
 
@@ -435,10 +438,18 @@ my $dump = sub {
   $d;
 };
 
-my @strings   = (0, 1, "\x00", "a", "\xFC", "\x{1F4A9}");
-my $eval = sub { eval Sub::Quote::quotify($_[0])};
+sub is_numeric {
+  my $val = shift;
+  my $sv = B::svref_2object(\$val);
+  !!($sv->FLAGS & ( B::SVp_IOK | B::SVp_NOK ) )
+}
 
-my @failed = grep { my $o = $eval->($_); !defined $o || $o ne $_ } @strings;
+my @strings = (0, 1, "\x00", "a", "\xFC", "\x{1F4A9}");
+
+my @failed = grep {
+  my $o = eval quotify($_);
+  !(defined $o ? ($o eq $_ && is_numeric($o) == is_numeric($_) ) : !defined $_)
+} @strings;
 
 ok !@failed, "evaling quotify returns same value for all strings"
   or diag "Failed strings: " . join(' ', map { $dump->($_) } @failed);

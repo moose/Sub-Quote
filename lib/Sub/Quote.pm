@@ -503,6 +503,8 @@ arcanez - Justin Hunter (cpan:ARCANEZ) <justin.d.hunter@gmail.com>
 
 kanashiro - Lucas Kanashiro (cpan:KANASHIRO) <kanashiro.duarte@gmail.com>
 
+djerius - Diab Jerius (cpan:DJERIUS) <djerius@cfa.harvard.edu>
+
 =head1 COPYRIGHT
 
 Copyright (c) 2010-2016 the Sub::Quote L</AUTHOR> and L</CONTRIBUTORS>

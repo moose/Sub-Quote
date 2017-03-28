@@ -133,11 +133,19 @@ like exception {
 
 my $broken_quoted = quote_sub q{
   return 5<;
+  hi
 };
 
+my $err = exception { $broken_quoted->() };
 like(
-  exception { $broken_quoted->() }, qr/Eval went very, very wrong/,
+  $err, qr/Eval went very, very wrong/,
   "quoted sub with syntax error dies when called"
+);
+
+my ($location) = $err =~ /syntax error at .+? line (\d+)/;
+like(
+  $err, qr/$location:\s*return 5<;/,
+  "syntax errors include usable line numbers"
 );
 
 sub in_main { 1 }

@@ -105,6 +105,10 @@ sub quote_sub {
   }
   my @caller = caller(0);
   my $attributes = $options->{attributes};
+  if ($attributes) {
+    /\A\w+(?:\(.*\))?\z/s || croak "invalid attribute $_"
+      for @$attributes;
+  }
   my $quoted_info = {
     name     => $name,
     code     => $code,

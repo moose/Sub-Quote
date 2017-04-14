@@ -99,6 +99,10 @@ sub defer_sub {
     if $target;
   $package ||= $options && $options->{package} || caller;
   my @attributes = @{$options && $options->{attributes} || []};
+  if (@attributes) {
+    /\A\w+(?:\(.*\))?\z/s || croak "invalid attribute $_"
+      for @attributes;
+  }
   my $deferred;
   my $undeferred;
   my $deferred_info = [ $target, $maker, \$undeferred ];

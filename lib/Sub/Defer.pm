@@ -106,7 +106,7 @@ sub defer_sub {
     my $code
       =  q[#line ].(__LINE__+2).q[ "].__FILE__.qq["\n]
       . qq[package $package;\n]
-      . ($target ? "sub $subname" : '+sub') . join(' ', map ":$_", @attributes)
+      . ($target ? "sub $subname" : '+sub') . join('', map " :$_", @attributes)
       . q[ {
         package Sub::Defer;
         # uncoverable subroutine

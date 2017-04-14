@@ -129,10 +129,17 @@ sub quote_sub {
     return $sub;
   }
   else {
-    my $deferred = defer_sub +($options->{no_install} ? undef : $name) => sub {
-      $unquoted if 0;
-      unquote_sub($quoted_info->{deferred});
-    }, ($attributes ? { attributes => $attributes } : ());
+    my $deferred = defer_sub(
+      ($options->{no_install} ? undef : $name),
+      sub {
+        $unquoted if 0;
+        unquote_sub($quoted_info->{deferred});
+      },
+      {
+        ($attributes ? ( attributes => $attributes ) : ()),
+        ($name ? () : ( package => $quoted_info->{package} )),
+      },
+    );
     weaken($quoted_info->{deferred} = $deferred);
     weaken($QUOTED{$deferred} = $quoted_info);
     return $deferred;

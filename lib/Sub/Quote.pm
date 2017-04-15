@@ -24,15 +24,16 @@ our @EXPORT_OK = qw(quotify capture_unroll inlinify sanitize_identifier);
 our %QUOTED;
 
 sub quotify {
+  my $value = $_[0];
   no warnings 'numeric';
-  ! defined $_[0]     ? 'undef()'
+  ! defined $value     ? 'undef()'
   # numeric detection
-  : (length( (my $dummy = '') & $_[0] )
-    && 0 + $_[0] eq $_[0]
-    && $_[0] * 0 == 0
-  ) ? $_[0]
-  : _HAVE_PERLSTRING  ? B::perlstring($_[0])
-  : qq["\Q$_[0]\E"];
+  : (length( (my $dummy = '') & $value )
+    && 0 + $value eq $value
+    && $value * 0 == 0
+  ) ? $value
+  : _HAVE_PERLSTRING  ? B::perlstring($value)
+  : qq["\Q$value\E"];
 }
 
 sub sanitize_identifier {

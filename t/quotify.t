@@ -90,6 +90,9 @@ for my $value (@quotify) {
 
   my $quoted = quotify $copy1;
 
+  is B::svref_2object(\$copy1)->FLAGS, B::svref_2object(\$copy2)->FLAGS,
+    "$value_name: quotify doesn't modify input";
+
   my $evaled;
   eval "\$evaled = $quoted; 1" or die $@;
 

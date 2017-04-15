@@ -27,6 +27,38 @@ sub is_numeric {
   !!($sv->FLAGS & ( B::SVp_IOK | B::SVp_NOK ) )
 }
 
+my %flags;
+{
+  no strict 'refs';
+  for my $flag (qw(
+    SVs_TEMP
+    SVs_OBJECT
+    SVs_GMG
+    SVs_SMG
+    SVs_RMG
+    SVf_IOK
+    SVf_NOK
+    SVf_POK
+    SVf_OOK
+    SVf_FAKE
+    SVf_READONLY
+    SVf_PROTECT
+    SVf_BREAK
+    SVp_IOK
+    SVp_NOK
+    SVp_POK
+  )) {
+    if (defined &{'B::'.$flag}) {
+      $flags{$flag} = &{'B::'.$flag};
+    }
+  }
+}
+sub flags {
+  my $val = shift;
+  my $flags = B::svref_2object(\$val)->FLAGS;
+  join ' ', sort grep $flags & $flags{$_}, keys %flags;
+}
+
 BEGIN {
   if (HAVE_UTF8) {
     eval '
@@ -90,7 +122,7 @@ for my $value (@quotify) {
 
   my $quoted = quotify $copy1;
 
-  is B::svref_2object(\$copy1)->FLAGS, B::svref_2object(\$copy2)->FLAGS,
+  is flags($copy1), flags($copy2),
     "$value_name: quotify doesn't modify input";
 
   my $evaled;

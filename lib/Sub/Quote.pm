@@ -216,7 +216,7 @@ sub unquote_sub {
       . "  }".($name ? "\n  \$\$_UNQUOTED = \\&${name}" : '') . ";\n"
       . "}\n"
       . "1;\n";
-    $ENV{SUB_QUOTE_DEBUG} && warn $make_sub;
+    $ENV{SUB_QUOTE_DEBUG} && warn _annotate( $make_sub, $ENV{SUB_QUOTE_DEBUG_ANNOTATE} );
     {
       no strict 'refs';
       local *{"${package}::${name}"} if $name;
@@ -227,12 +227,23 @@ sub unquote_sub {
         $e = $@;
       }
       unless ($success) {
-        croak "Eval went very, very wrong:\n\n${make_sub}\n\n$e";
+        croak "Eval went very, very wrong:\n\n@{[ _annotate($make_sub, 1) ]}\n\n$e";
       }
       weaken($QUOTED{$$unquoted} = $quoted_info);
     }
   }
   $$unquoted;
+}
+
+sub _annotate {
+
+    my ( $code, $annotate ) = @_;
+
+    return $code unless $annotate;
+
+    my $line = '0000';
+    $code =~ s/^(.)/@{[++$line]}: $1/mg;
+    $code;
 }
 
 sub qsub ($) {

@@ -114,15 +114,16 @@ my @quotify = (
 my $eval_utf8;
 
 for my $value (@quotify) {
-  my $copy1 = my $copy2 = my $copy3 = my $copy4 = $value;
   my $value_name
     = _dump($value)
     . (HAVE_UTF8 && utf8::is_utf8($value) ? ' utf8' : '')
     . (is_numeric($value) ? ' num' : '');
 
-  my $quoted = quotify $copy1;
+  my $quoted = quotify(my $copy = $value);
+  utf8::downgrade($quoted, 1)
+    if HAVE_UTF8;
 
-  is flags($copy1), flags($copy2),
+  is flags($copy), flags($value),
     "$value_name: quotify doesn't modify input";
 
   my $evaled;
@@ -131,16 +132,16 @@ for my $value (@quotify) {
   is is_numeric($evaled), is_numeric($value),
     "$value_name: numeric status maintained";
 
-  is $copy3, $evaled,
+  is $value, $evaled,
     "$value_name: value maintained";
 
   if (HAVE_UTF8) {
     my $utf8_evaled = eval_utf8($quoted);
 
-    is is_numeric($value), is_numeric($evaled),
+    is is_numeric($value), is_numeric($utf8_evaled),
       "$value_name: numeric status maintained under utf8";
 
-    is $copy4, $utf8_evaled,
+    is $value, $utf8_evaled,
       "$value_name: value maintained under utf8";
   }
 }

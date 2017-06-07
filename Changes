@@ -1,5 +1,6 @@
 Revision history for Sub::Quote
 
+2.004000 - 2017-06-07
   - more extensive quotify tests
   - split tests into separate files
   - propagate package to deferred subs, even if unnamed

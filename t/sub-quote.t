@@ -121,7 +121,7 @@ like exception {
 
 my $broken_quoted = quote_sub q{
   return 5<;
-  hi
+  Guh
 };
 
 my $err = exception { $broken_quoted->() };

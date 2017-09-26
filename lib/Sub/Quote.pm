@@ -105,7 +105,7 @@ sub quote_sub {
       unless $subname =~ /^[^\d\W]\w*$/;
   }
   my @caller = caller(0);
-  my $attributes = $options->{attributes};
+  my ($attributes, $file, $line) = @{$options}{qw(attributes file line)};
   if ($attributes) {
     /\A\w+(?:\(.*\))?\z/s || croak "invalid attribute $_"
       for @$attributes;
@@ -119,6 +119,8 @@ sub quote_sub {
     warning_bits => (exists $options->{warning_bits} ? $options->{warning_bits} : $caller[9]),
     hintshash    => (exists $options->{hintshash}    ? $options->{hintshash}    : $caller[10]),
     ($attributes ? (attributes => $attributes) : ()),
+    ($file       ? (file => $file) : ()),
+    ($line       ? (line => $line) : ()),
   };
   my $unquoted;
   weaken($quoted_info->{unquoted} = \$unquoted);
@@ -150,8 +152,20 @@ sub quote_sub {
 sub _context {
   my $info = shift;
   $info->{context} ||= do {
-    my ($package, $hints, $warning_bits, $hintshash)
-      = @{$info}{qw(package hints warning_bits hintshash)};
+    my ($package, $hints, $warning_bits, $hintshash, $file, $line)
+      = @{$info}{qw(package hints warning_bits hintshash file line)};
+
+    $line ||= 1
+      if $file;
+
+    my $line_mark = '';
+    if ($line) {
+      $line_mark = "#line ".($line-1);
+      if ($file) {
+        $line_mark .= qq{ "$file"};
+      }
+      $line_mark .= "\n";
+    }
 
     $info->{context}
       ="# BEGIN quote_sub PRELUDE\n"
@@ -165,6 +179,7 @@ sub _context {
         keys %$hintshash)
       ."  );\n"
       ."}\n"
+      .$line_mark
       ."# END quote_sub PRELUDE\n";
   };
 }

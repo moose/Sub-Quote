@@ -244,10 +244,11 @@ sub qsub ($) {
 }
 
 sub CLONE {
-  %QUOTED = map { defined $_ ? (
+  my @quoted = map { defined $_ ? (
     $_->{unquoted} && ${$_->{unquoted}} ? (${ $_->{unquoted} } => $_) : (),
     $_->{deferred} ? ($_->{deferred} => $_) : (),
   ) : () } values %QUOTED;
+  %QUOTED = @quoted;
   weaken($_) for values %QUOTED;
 }
 

@@ -12,6 +12,7 @@ use Carp qw(croak);
 BEGIN { our @CARP_NOT = qw(Sub::Defer) }
 use B ();
 BEGIN {
+  *_HAVE_IS_UTF8 = defined &utf8::is_utf8 ? sub(){1} : sub(){0};
   *_HAVE_PERLSTRING = defined &B::perlstring ? sub(){1} : sub(){0};
 }
 
@@ -28,7 +29,8 @@ sub quotify {
   no warnings 'numeric';
   ! defined $value     ? 'undef()'
   # numeric detection
-  : (length( (my $dummy = '') & $value )
+  : (!(_HAVE_IS_UTF8 && utf8::is_utf8($value))
+    && length( (my $dummy = '') & $value )
     && 0 + $value eq $value
     && $value * 0 == 0
   ) ? $value

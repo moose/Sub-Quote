@@ -344,7 +344,40 @@ good idea.  For a sub that will most likely be inlined, it is not recommended.
 =item C<package>
 
 The package that the quoted sub will be evaluated in.  If not specified, the
-sub calling C<quote_sub> will be used.
+package from sub calling C<quote_sub> will be used.
+
+=item C<hints>
+
+The value of L<< C<$^H> | perlvar/$^H >> to use for the code being evaluated.
+This captures the settings of the L<strict> pragma.  If not specified, the value
+from the calling code will be used.
+
+=item C<warning_bits>
+
+The value of L<< C<${^WARNING_BITS}> | perlvar/${^WARNING_BITS} >> to use for
+the code being evaluated.  This captures the L<warnings> set.  If not specified,
+the warnings from the calling code will be used.
+
+=item C<%^H>
+
+The value of L<< C<%^H> | perlvar/%^H >> to use for the code being evaluated.
+This captures additional pragma settings.  If not specified, the value from the
+calling code will be used if possible (on perl 5.10+).
+
+=item C<attributes>
+
+The L<perlsub/Subroutine Attributes> to apply to the sub generated.  Should be
+specified as an array reference.  The attributes will be applied to both the
+generated sub and the deferred wrapper, if one is used.
+
+=item C<file>
+
+The apparent filename to use for the code being evaluated.
+
+=item C<line>
+
+The apparent line number
+to use for the code being evaluated.
 
 =back
 

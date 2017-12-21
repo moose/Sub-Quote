@@ -178,7 +178,7 @@ subroutines and methods until they are first called.
 
 =head2 defer_sub
 
- my $coderef = defer_sub $name => sub { ... };
+ my $coderef = defer_sub $name => sub { ... }, \%options;
 
 This subroutine returns a coderef that encapsulates the provided sub - when
 it is first called, the provided sub is called and is -itself- expected to
@@ -188,6 +188,24 @@ If a name is provided, this also installs the sub as that name - and when
 the subroutine is undeferred will re-install the final version for speed.
 
 Exported by default.
+
+=head3 Options
+
+A hashref of options can optionally be specified.
+
+=over 4
+
+=item package
+
+The package to generate the sub in.  Will be overridden by a fully qualified
+C<$name> option.  If not specified, will default to the caller's package.
+
+=item attributes
+
+The L<perlsub/Subroutine Attributes> to apply to the sub generated.  Should be
+specified as an array reference.
+
+=back
 
 =head2 undefer_sub
 

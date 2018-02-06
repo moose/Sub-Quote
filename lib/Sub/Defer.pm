@@ -223,6 +223,19 @@ If this is confusing, take a look at the example in the L</SYNOPSIS>.
 
 Exported by default.
 
+=head2 defer_info
+
+ my $data = defer_info $sub;
+ my ($name, $generator, $options, $undeferred_sub) = @$data;
+
+Returns original arguments to defer_sub, plus the undeferred version if this
+sub has already been undeferred.
+
+Note that $sub can be either the original deferred version or the undeferred
+version for convenience.
+
+Not exported by default.
+
 =head2 undefer_all
 
  undefer_all();

@@ -1,5 +1,9 @@
 Revision history for Sub::Quote
 
+  - fixed defer_info and undefer_sub from returning data for a deferred sub
+    after it expires, even if the ref address matches
+  - fixed defer_info not returning info for undeferred unnamed subs after the
+    deferred sub expires
   - include options in defer_info return data
   - exclude internals from defer_info return data
   - document defer_info function

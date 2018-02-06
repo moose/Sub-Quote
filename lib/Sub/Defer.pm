@@ -47,9 +47,16 @@ sub _install_coderef {
 
 sub undefer_sub {
   my ($deferred) = @_;
-  my ($target, $maker, $undeferred_ref) = @{
-    $DEFERRED{$deferred}||return $deferred
-  };
+  my $info = $DEFERRED{$deferred} or return $deferred;
+  my ($target, $maker, $options, $undeferred_ref, $deferred_sub) = @$info;
+
+  if (!(
+    $deferred_sub && $deferred eq $deferred_sub
+    || ${$undeferred_ref} && $deferred eq ${$undeferred_ref}
+  )) {
+    return $deferred;
+  }
+
   return ${$undeferred_ref}
     if ${$undeferred_ref};
   ${$undeferred_ref} = my $made = $maker->();
@@ -62,9 +69,9 @@ sub undefer_sub {
     # _install_coderef calls are not necessary --ribasushi
     *{_getglob($target)} = $made;
   }
-  $DEFERRED{$made} = $DEFERRED{$deferred};
-  weaken $DEFERRED{$made}
-    unless $target;
+  my $undefer_info = [ $target, $maker, $options, \$$undeferred_ref ];
+  $info->[5] = $DEFERRED{$made} = $undefer_info;
+  weaken ${$undefer_info->[3]};
 
   return $made;
 }
@@ -89,6 +96,13 @@ sub defer_info {
   my $info = $DEFERRED{$deferred||''} or return undef;
 
   my ($target, $maker, $options, $undeferred_ref, $deferred_sub) = @$info;
+  if (!(
+    $deferred_sub && $deferred eq $deferred_sub
+    || ${$undeferred_ref} && $deferred eq ${$undeferred_ref}
+  )) {
+    delete $DEFERRED{$deferred};
+    return undef;
+  }
   [
     $target, $maker, $options,
     ( $undeferred_ref && $$undeferred_ref ? $$undeferred_ref : ()),
@@ -148,11 +162,13 @@ sub defer_sub {
 }
 
 sub CLONE {
-  %DEFERRED = map { defined $_ && $_->[4] ? ($_->[4] => $_) : () } values %DEFERRED;
-  foreach my $info (values %DEFERRED) {
-    weaken($info)
-      unless $info->[0] && ${$info->[3]};
-  }
+  %DEFERRED = map {
+    defined $_ ? (
+        $_->[4] ? ($_->[4] => $_)
+      : ($_->[3] && ${$_->[3]}) ? (${$_->[3]} => $_)
+      : ()
+    ) : ()
+  } values %DEFERRED;
 }
 
 1;

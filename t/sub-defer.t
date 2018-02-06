@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Fatal;
-use Sub::Defer qw(defer_sub undefer_sub undefer_all undefer_package);
+use Sub::Defer qw(defer_sub undefer_sub undefer_all undefer_package defer_info);
 
 my %made;
 
@@ -101,7 +101,7 @@ is( $made{'Bar::Baz::one'}, undef, 'sub-package not undefered by undefer_package
   my $foo_string = "$foo";
   undef $foo;
 
-  is Sub::Defer::defer_info($foo_string), undef,
+  is defer_info($foo_string), undef,
     "deferred subs don't leak";
 
   Sub::Defer->CLONE;
@@ -115,14 +115,14 @@ is( $made{'Bar::Baz::one'}, undef, 'sub-package not undefered by undefer_package
   Sub::Defer->CLONE;
   undef $foo;
 
-  is Sub::Defer::defer_info($foo_string), undef,
+  is defer_info($foo_string), undef,
     "CLONE doesn't strengthen refs";
 }
 
 {
   my $foo = defer_sub undef, sub { sub { 'foo' } };
   my $foo_string = "$foo";
-  my $foo_info = Sub::Defer::defer_info($foo_string);
+  my $foo_info = defer_info($foo_string);
   undef $foo;
 
   is exception { Sub::Defer->CLONE }, undef,

@@ -1,5 +1,7 @@
 Revision history for Sub::Quote
 
+  - include options in defer_info return data
+  - exclude internals from defer_info return data
   - encode all utf8 flagged scalars as strings, since they generally will
     always have originated as strings.  Avoids future warning on bitwise ops
     on strings with wide characters.

@@ -87,7 +87,12 @@ sub undefer_package {
 sub defer_info {
   my ($deferred) = @_;
   my $info = $DEFERRED{$deferred||''} or return undef;
-  [ @$info ];
+
+  my ($target, $maker, $options, $undeferred_ref, $deferred_sub) = @$info;
+  [
+    $target, $maker, $options,
+    ( $undeferred_ref && $$undeferred_ref ? $$undeferred_ref : ()),
+  ];
 }
 
 sub defer_sub {
@@ -105,7 +110,7 @@ sub defer_sub {
   }
   my $deferred;
   my $undeferred;
-  my $deferred_info = [ $target, $maker, \$undeferred ];
+  my $deferred_info = [ $target, $maker, $options, \$undeferred ];
   if (@attributes || $target && !_CAN_SUBNAME) {
     my $code
       =  q[#line ].(__LINE__+2).q[ "].__FILE__.qq["\n]
@@ -115,7 +120,7 @@ sub defer_sub {
         package Sub::Defer;
         # uncoverable subroutine
         # uncoverable statement
-        $undeferred ||= undefer_sub($deferred_info->[3]);
+        $undeferred ||= undefer_sub($deferred_info->[4]);
         goto &$undeferred; # uncoverable statement
         $undeferred; # fake lvalue return
       }]."\n"
@@ -131,22 +136,22 @@ sub defer_sub {
   else {
     # duplicated from above
     $deferred = sub {
-      $undeferred ||= undefer_sub($deferred_info->[3]);
+      $undeferred ||= undefer_sub($deferred_info->[4]);
       goto &$undeferred;
     };
     _install_coderef($target, $deferred)
       if $target;
   }
-  weaken($deferred_info->[3] = $deferred);
+  weaken($deferred_info->[4] = $deferred);
   weaken($DEFERRED{$deferred} = $deferred_info);
   return $deferred;
 }
 
 sub CLONE {
-  %DEFERRED = map { defined $_ && $_->[3] ? ($_->[3] => $_) : () } values %DEFERRED;
+  %DEFERRED = map { defined $_ && $_->[4] ? ($_->[4] => $_) : () } values %DEFERRED;
   foreach my $info (values %DEFERRED) {
     weaken($info)
-      unless $info->[0] && ${$info->[2]};
+      unless $info->[0] && ${$info->[3]};
   }
 }
 

@@ -4,9 +4,7 @@ no warnings 'once';
 use B;
 BEGIN {
   local $utf8::{is_utf8};
-  delete $utf8::{is_utf8};
   local $B::{perlstring};
-  delete $B::{perlstring};
   require Sub::Quote;
 }
 die "Unable to disable utf8::is_utf8 and B::perlstring for testing"

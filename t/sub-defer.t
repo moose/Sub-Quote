@@ -287,4 +287,30 @@ is( $made{'Bar::Baz::one'}, undef, 'sub-package not undefered by undefer_package
     'defer_info on undeferred gives name, generator, options after undefer';
 }
 
+{
+  my $x;
+  my $sub = sub {
+    $x++;
+    (caller(0))[3];
+  };
+  Sub::Defer::_install_coderef('Blorp::foo', 'Farg::foo', $sub);
+  is \&Blorp::foo, $sub,
+    '_install_coderef properly installs subs';
+
+  SKIP: {
+    skip 'no sub naming module available', 1
+      unless Sub::Defer::_CAN_SUBNAME;
+
+    is Blorp::foo(), 'Farg::foo',
+      '_install_coderef properly names subs';
+  }
+  my $sub2 = sub {
+    $x++;
+    (caller(0))[3];
+  };
+  Sub::Defer::_install_coderef('Blorp::foo', 'Farg::foo', $sub2);
+  is \&Blorp::foo, $sub2,
+    '_install_coderef properly replaces subs';
+}
+
 done_testing;

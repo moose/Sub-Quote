@@ -6,11 +6,11 @@ use Test::Fatal;
 use Data::Dumper;
 use B;
 
-use constant HAVE_UTF8 => defined &utf8::upgrade && defined &utf8::is_utf8;;
-
 use Sub::Quote qw(
   quotify
 );
+
+use constant HAVE_UTF8 => Sub::Quote::_HAVE_IS_UTF8;
 
 sub _dump {
   my $value = shift;

@@ -92,4 +92,15 @@ like exception {
   is $sub->(5), 5, 'inlinified code get correct values';
 }
 
+{
+  my $inlined_code = inlinify q{
+    my $z = $_[0];
+    $z;
+  }, '$x', $prelude, 1;
+  my $sub = eval "sub { [ $inlined_code, \@_ ] }";
+  is "$@", '', 'inlinify with local produces valid code'
+    or diag "code:\n$inlined_code";
+  is_deeply $sub->(5), [1, 5], 'inlinified code get correct values';
+}
+
 done_testing;

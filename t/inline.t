@@ -81,4 +81,15 @@ like exception {
   is $sub->(), 2, 'inlinified code get correct values';
 }
 
+{
+  my $inlined_code = inlinify q{
+    my $z = $_[0];
+    $z;
+  }, '@_', $prelude;
+  my $sub = eval "sub { $inlined_code }";
+  is "$@", '', 'inlinify with @_ as args produces valid code'
+    or diag "code:\n$inlined_code";
+  is $sub->(5), 5, 'inlinified code get correct values';
+}
+
 done_testing;

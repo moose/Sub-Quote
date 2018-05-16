@@ -146,6 +146,11 @@ my @quotify = (
   @utf8_strings,
 );
 
+# HAVE_UTF8 will be artificially false under quotify-5.6.t.  skip utf8 strings
+# in this case as they will produce warnings or errors in newer perls.
+@quotify = grep !utf8::is_utf8($_), @quotify
+  if !HAVE_UTF8 and "$]" >= 5.025;
+
 my $eval_utf8;
 
 for my $value (_uniq @quotify) {

@@ -54,6 +54,14 @@ my $four_defer = defer_sub 'Foo::four' => sub {
 };
 is($four_defer, \&Foo::four, 'four defer installed');
 
+my $unnamed_defer = defer_sub undef ,=> sub {
+  die 'remade - wtf' if $made{'unnamed'};
+  $made{'unnamed'} = sub { 'dwarg' };
+};
+my $unnamed_result = $unnamed_defer->();
+ok $made{'unnamed'}, 'unnamed deferred subs generate subs';
+is $unnamed_result, 'dwarg', 'unnamed deferred subs call generated sub properly';
+
 # somebody somewhere wraps up around the deferred installer
 no warnings qw/redefine/;
 my $orig = Foo->can('four');

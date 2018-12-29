@@ -68,6 +68,8 @@ sub capture_unroll {
 
 sub inlinify {
   my ($code, $args, $extra, $local) = @_;
+  $args = '()'
+    if !defined $args;
   my $do = 'do { '.($extra||'');
   if ($code =~ s/^(\s*package\s+([a-zA-Z0-9:]+);)//) {
     $do .= $1;

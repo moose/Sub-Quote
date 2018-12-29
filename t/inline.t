@@ -103,4 +103,14 @@ like exception {
   is_deeply $sub->(5), [1, 5], 'inlinified code get correct values';
 }
 
+{
+  my $inlined_code = inlinify q{
+    219;
+  }, undef, $prelude;
+  my $sub = eval "sub { $inlined_code }";
+  is "$@", '', 'inlinify without args produces valid code'
+    or diag "code:\n$inlined_code";
+  is $sub->(), 219, 'inlinified code get correct values';
+}
+
 done_testing;

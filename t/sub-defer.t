@@ -305,6 +305,8 @@ is( $made{'Bar::Baz::one'}, undef, 'sub-package not undefered by undefer_package
     'defer_info on undeferred gives name, generator, options after undefer';
 }
 
+is defer_info(undef), undef, 'defer_info on undef gives undef';
+
 {
   my $x;
   my $sub = sub {

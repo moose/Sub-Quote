@@ -313,4 +313,17 @@ is( $made{'Bar::Baz::one'}, undef, 'sub-package not undefered by undefer_package
     '_install_coderef properly replaces subs';
 }
 
+{
+  my $x;
+  my $sub = sub { $x = 1; sub { $x } };
+  my $deferred = defer_sub undef, $sub;
+  my $info = $Sub::Defer::DEFERRED{$deferred};
+  undef $deferred;
+  # simulate reused memory address
+  @{$Sub::Defer::DEFERRED{$sub}} = @$info;
+  undefer_sub($sub);
+  is $x, undef,
+    'undefer_sub does not operate on non-deferred sub with reused memory address';
+}
+
 done_testing;

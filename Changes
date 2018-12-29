@@ -1,5 +1,12 @@
 Revision history for Sub::Quote
 
+  - don't test threads behavior on perl < 5.8.5, since they are too unstable
+  - more tests
+  - preserve inf, nan, and false in quotify
+  - improve accuracy of quotified floating point numbers
+  - SUB_QUOTE_DEBUG can now be set to sub names, package names, or a regex to
+    match against the code to filter which generated subs are printed to STDERR.
+
 2.005001 - 2018-04-20
   - add a workaround for test failures on early 5.8 releases with threads
 

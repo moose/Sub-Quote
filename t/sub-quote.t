@@ -320,6 +320,16 @@ is $@, '', 'sanitize_identifier gives valid identifier';
 }
 
 {
+  my $error;
+  eval {
+    my $sub = quote_sub q{ "gorf" }, {}, { attributes => [ 'oh boy' ] };
+    1;
+  } or $error = $@;
+  like $error, qr/invalid attribute/,
+    'invalid attributes are rejected';
+}
+
+{
   my $sub = quote_sub q{ sub { join " line ", (caller(0))[1,2] }->() }, {}, { line => 42 };
   like $sub->(), qr/eval.* line 42\b/, "line provided";
 }

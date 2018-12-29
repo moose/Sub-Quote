@@ -159,6 +159,16 @@ is( $made{'Bar::Baz::one'}, undef, 'sub-package not undefered by undefer_package
 }
 
 {
+  my $error;
+  eval {
+    my $sub = defer_sub undef, sub { sub { "gorf" } }, { attributes => [ 'oh boy' ] };
+    1;
+  } or $error = $@;
+  like $error, qr/invalid attribute/,
+    'invalid attributes are rejected';
+}
+
+{
   my $guff;
   my $deferred = defer_sub "Foo::flub", sub { sub { $guff } };
   my $undeferred = undefer_sub($deferred);

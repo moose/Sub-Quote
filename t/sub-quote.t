@@ -267,6 +267,8 @@ is scalar @stuff, 3, 'qsub only accepts a single parameter';
     'evaled immediately with no_defer option (named)';
   ok defined &No::Defer::Test,
     'sub installed with no_defer option';
+  is No::Defer::Test(), 1,
+    'sub callable with no_defer option';
 }
 
 {

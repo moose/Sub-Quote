@@ -33,7 +33,11 @@ sub quotify {
     && length( (my $dummy = '') & $value )
     && 0 + $value eq $value
   ) ? (
-    $value != $value ? 'CORE::sin(9**9**9)' # nan
+    $value != $value ? (
+      $value eq -CORE::sin(9**9**9)
+        ? '(-CORE::sin(9**9**9))' # -nan
+        : 'CORE::sin(9**9**9)'    # nan
+    )
     : $value == 9**9**9 ? '(9**9**9)'      # inf
     : $value == -9**9**9 ? '(-9**9**9)'    # -inf
     : int($value) == $value ? $value       # integer

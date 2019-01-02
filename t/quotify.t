@@ -159,7 +159,10 @@ for my $value (_uniq @quotify) {
   utf8::downgrade($quoted, 1)
     if HAVE_UTF8;
 
-  note "quotified as $quoted";
+  my $note = "quotified as $quoted";
+  utf8::encode($note)
+    if defined &utf8::encode;
+  note $note;
 
   is flags($copy), flags($value),
     "$value_name: quotify doesn't modify input";

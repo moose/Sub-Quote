@@ -169,7 +169,7 @@ for my $value (_uniq @quotify) {
 
   for my $check (
     [ $evaled ],
-    #( HAVE_UTF8 ? [ eval_utf8($quoted), ' under utf8' ] : ()),
+    ( HAVE_UTF8 ? [ eval_utf8($quoted), ' under utf8' ] : ()),
   ) {
     my ($check_value, $suffix) = @$check;
     $suffix ||= '';

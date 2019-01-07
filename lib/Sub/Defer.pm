@@ -69,7 +69,7 @@ sub undefer_sub {
     # _install_coderef calls are not necessary --ribasushi
     *{_getglob($target)} = $made;
   }
-  my $undefer_info = [ $target, $maker, $options, \$$undeferred_ref ];
+  my $undefer_info = [ $target, $maker, $options, $undeferred_ref ];
   $info->[5] = $DEFERRED{$made} = $undefer_info;
   weaken ${$undefer_info->[3]};
 

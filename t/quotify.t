@@ -79,18 +79,11 @@ sub _uniq {
   } @_;
 }
 
-BEGIN {
-  if (HAVE_UTF8) {
-    eval '
-      sub eval_utf8 {
-        my $value = shift;
-        my $output;
-        eval "use utf8; \$output = $value; 1;" or die $@;
-        $output;
-      }
-      1;
-    ' or die $@;
-  }
+sub eval_utf8 {
+  my $value = shift;
+  my $output;
+  eval "use utf8; \$output = $value; 1;" or die $@;
+  $output;
 }
 
 my @numbers = (

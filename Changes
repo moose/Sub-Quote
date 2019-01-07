@@ -1,5 +1,6 @@
 Revision history for Sub::Quote
 
+2.006_001 - 2019-01-07
   - avoid warnings or failures on new perls when testing quoting UTF-8 strings
   - test quotify output under utf8 pragma
   - fix quoting of negative NaN

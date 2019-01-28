@@ -14,6 +14,7 @@ use B ();
 BEGIN {
   *_HAVE_IS_UTF8 = defined &utf8::is_utf8 ? sub(){1} : sub(){0};
   *_HAVE_PERLSTRING = defined &B::perlstring ? sub(){1} : sub(){0};
+  *_BAD_BACKSLASH_ESCAPE = _HAVE_PERLSTRING() && "$]" == 5.010_000 ? sub(){1} : sub(){0};
 }
 
 our $VERSION = '2.006_001';
@@ -23,6 +24,21 @@ our @EXPORT = qw(quote_sub unquote_sub quoted_from_sub qsub);
 our @EXPORT_OK = qw(quotify capture_unroll inlinify sanitize_identifier);
 
 our %QUOTED;
+
+my %escape;
+if (_BAD_BACKSLASH_ESCAPE) {
+  %escape = (
+    (map +(chr($_) => sprintf '\x%02x', $_), 0 .. 0x31, 0x7f),
+    "\t" => "\\t",
+    "\n" => "\\n",
+    "\r" => "\\r",
+    "\f" => "\\f",
+    "\b" => "\\b",
+    "\a" => "\\a",
+    "\e" => "\\e",
+    (map +($_ => "\\$_"), qw(" \ $ @)),
+  );
+}
 
 sub quotify {
   my $value = $_[0];
@@ -48,6 +64,12 @@ sub quotify {
     }
   )
   : !length($value) && eval { use warnings 'FATAL' => 'numeric'; $value == 0 } ? '(!1)' # false
+  : _BAD_BACKSLASH_ESCAPE && _HAVE_IS_UTF8 && utf8::is_utf8($value) ? do {
+    $value =~ s/(["\$\@\\[:cntrl:]]|[^\x00-\x7f])/
+      $escape{$1} || sprintf('\x{%x}', ord($1))
+    /ge;
+    qq["$value"];
+  }
   : _HAVE_PERLSTRING ? B::perlstring($value)
   : qq["\Q$value\E"];
 }

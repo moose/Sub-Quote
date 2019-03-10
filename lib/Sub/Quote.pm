@@ -17,7 +17,7 @@ BEGIN {
   *_BAD_BACKSLASH_ESCAPE = _HAVE_PERLSTRING() && "$]" == 5.010_000 ? sub(){1} : sub(){0};
 }
 
-our $VERSION = '2.006_002';
+our $VERSION = '2.006003';
 $VERSION = eval $VERSION;
 
 our @EXPORT = qw(quote_sub unquote_sub quoted_from_sub qsub);

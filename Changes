@@ -1,5 +1,7 @@
 Revision history for Sub::Quote
 
+  - releasing as stable
+
 2.006_002 - 2019-01-29
   - Fix quotifying of backslashes in utf8-flagged strings on perl 5.10.0.
 

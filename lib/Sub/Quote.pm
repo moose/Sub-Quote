@@ -63,7 +63,7 @@ sub quotify {
       $float;
     }
   )
-  : !length($value) && eval { use warnings 'FATAL' => 'numeric'; $value == 0 } ? '(!1)' # false
+  : !length($value) && length( (my $dummy2 = '') & $value ) ? '(!1)' # false
   : _BAD_BACKSLASH_ESCAPE && _HAVE_IS_UTF8 && utf8::is_utf8($value) ? do {
     $value =~ s/(["\$\@\\[:cntrl:]]|[^\x00-\x7f])/
       $escape{$1} || sprintf('\x{%x}', ord($1))

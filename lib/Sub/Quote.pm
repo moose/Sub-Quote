@@ -50,9 +50,9 @@ sub quotify {
     && 0 + $value eq $value
   ) ? (
     $value != $value ? (
-      $value eq -CORE::sin(9**9**9)
-        ? '(-CORE::sin(9**9**9))' # -nan
-        : 'CORE::sin(9**9**9)'    # nan
+      $value eq -(9**9**9*0)
+        ? '(-(9**9**9*0))' # -nan
+        : '(9**9**9*0)'    # nan
     )
     : $value == 9**9**9 ? '(9**9**9)'      # inf
     : $value == -9**9**9 ? '(-9**9**9)'    # -inf

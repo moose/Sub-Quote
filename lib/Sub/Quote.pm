@@ -60,7 +60,6 @@ sub quotify {
     )
     : $value == 9**9**9 ? '(9**9**9)'      # inf
     : $value == -9**9**9 ? '(-9**9**9)'    # -inf
-    : int($value) == $value ? $value       # integer
     : do {
       my $float = $value;
       for my $precision (0 .. _MAX_FLOAT_PRECISION) {

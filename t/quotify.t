@@ -11,6 +11,12 @@ use Sub::Quote qw(
 );
 
 use constant HAVE_UTF8 => Sub::Quote::_HAVE_IS_UTF8;
+use constant INF => 9**9**9;
+use constant NAN => sin(INF);
+use constant INF_NAN_SUPPORT => (
+  INF == 10 * INF
+  and !(NAN == 0 || NAN == 0.1 || NAN + 0 == 0)
+);
 
 sub _dump {
   my $value = shift;
@@ -90,10 +96,7 @@ my @numbers = (
   -20 .. 20,
   qw(00 01 .0 .1 0.0 0.00 00.00 0.10 0.101 1e5 1e-5 1e50), '0 but true',
   (map 1 / $_, -10 .. -2, 2 .. 10),
-  9**9**9,        # inf
-  -9**9**9,       # -inf
-  sin(9**9**9),   # nan
-  -sin(9**9**9),  # -nan
+  (INF_NAN_SUPPORT ? ( INF, -(INF), NAN, -(NAN) ) : ()),
 );
 
 my @strings = (

@@ -15,6 +15,7 @@ BEGIN {
   *_HAVE_IS_UTF8 = defined &utf8::is_utf8 ? sub(){1} : sub(){0};
   *_HAVE_PERLSTRING = defined &B::perlstring ? sub(){1} : sub(){0};
   *_BAD_BACKSLASH_ESCAPE = _HAVE_PERLSTRING() && "$]" == 5.010_000 ? sub(){1} : sub(){0};
+  *_HAVE_HEX_FLOAT = "$]" >= 5.022 ? sub(){1} : sub(){0};
 
   my $precision = length 1/9;
   *_MAX_FLOAT_PRECISION = sub(){$precision};
@@ -66,6 +67,10 @@ sub quotify {
         $float = sprintf '%.'.$precision.'g', $value;
         last
           if $float == $value;
+
+        if (_HAVE_HEX_FLOAT and $precision == _MAX_FLOAT_PRECISION) {
+          $float = sprintf "%a", $value;
+        }
       }
       "$float";
     }

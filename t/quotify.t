@@ -37,6 +37,13 @@ sub is_numeric {
   !!( $flags & ( B::SVp_IOK | B::SVp_NOK ) )
 }
 
+sub is_float {
+  my $num = shift;
+    $num != int($num)
+  || $num > ~0
+  || $num < -(~0>>1)-1;
+}
+
 sub is_strict_numeric {
   my $flags = B::svref_2object(\($_[0]))->FLAGS;
 
@@ -180,6 +187,17 @@ for my $value (_uniq @quotify) {
 
     if (is_numeric($value)) {
       if ($value == $value) {
+        my $todo;
+        if ($check_value != $value && is_float($value)) {
+          my $diff = abs($check_value - $value);
+          my $accuracy = abs($value)/$diff;
+          my $precision = Sub::Quote::_MAX_FLOAT_PRECISION - 1;
+          $todo = "not always accurate beyond $precision digits"
+            if $accuracy <= 10**$precision;
+        }
+
+        local $TODO = $todo
+          if $todo;
         cmp_ok $check_value, '==', $value,
           "$value_name: numeric value maintained$suffix"
           or do {

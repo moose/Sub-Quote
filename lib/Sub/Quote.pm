@@ -15,6 +15,9 @@ BEGIN {
   *_HAVE_IS_UTF8 = defined &utf8::is_utf8 ? sub(){1} : sub(){0};
   *_HAVE_PERLSTRING = defined &B::perlstring ? sub(){1} : sub(){0};
   *_BAD_BACKSLASH_ESCAPE = _HAVE_PERLSTRING() && "$]" == 5.010_000 ? sub(){1} : sub(){0};
+
+  my $precision = length 1/9;
+  *_MAX_FLOAT_PRECISION = sub(){$precision};
 }
 
 our $VERSION = '2.006003';
@@ -58,7 +61,7 @@ sub quotify {
     : $value == -9**9**9 ? '(-9**9**9)'    # -inf
     : int($value) == $value ? $value       # integer
     : do {
-      my $float = sprintf('%.20f', $value);
+      my $float = sprintf('%.'._MAX_FLOAT_PRECISION.'f', $value);
       $float =~ s/(\.[0-9]+?)0+\z/$1/;
       $float;
     }

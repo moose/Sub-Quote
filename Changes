@@ -1,5 +1,6 @@
 Revision history for Sub::Quote
 
+2.006_004 - 2019-04-24
   - change quotify of NaNs to simpler calculation
   - avoid ever triggering exceptions when testing for quotify on false values
   - skip quotify Inf and NaN tests if perl is compiled without support for

@@ -9,7 +9,9 @@ use Sub::Quote qw(
   quotify
 );
 
-use constant HAVE_UTF8 => Sub::Quote::_HAVE_IS_UTF8;
+use constant HAVE_UTF8           => Sub::Quote::_HAVE_IS_UTF8;
+use constant MAX_FLOAT_PRECISION => Sub::Quote::_MAX_FLOAT_PRECISION;
+use constant HAVE_HEX_FLOAT      => Sub::Quote::_HAVE_HEX_FLOAT;
 use constant INF => 9**9**9;
 use constant NAN => sin(INF);
 use constant INF_NAN_SUPPORT => (
@@ -191,10 +193,10 @@ for my $value (_uniq @quotify) {
     if (is_numeric($value)) {
       if ($value == $value) {
         my $todo;
-        if ($check_value != $value && is_float($value)) {
+        if (!HAVE_HEX_FLOAT && $check_value != $value && is_float($value)) {
           my $diff = abs($check_value - $value);
           my $accuracy = abs($value)/$diff;
-          my $precision = Sub::Quote::_MAX_FLOAT_PRECISION - 1;
+          my $precision = MAX_FLOAT_PRECISION - 1;
           $todo = "not always accurate beyond $precision digits"
             if $accuracy <= 10**$precision;
         }

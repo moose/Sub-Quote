@@ -21,7 +21,7 @@ BEGIN {
   *_MAX_FLOAT_PRECISION = sub(){$precision};
 }
 
-our $VERSION = '2.006003';
+our $VERSION = '2.006_004';
 $VERSION = eval $VERSION;
 
 our @EXPORT = qw(quote_sub unquote_sub quoted_from_sub qsub);

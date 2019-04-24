@@ -93,7 +93,10 @@ sub eval_utf8 {
 
 my @numbers = (
   -20 .. 20,
-  qw(00 01 .0 .1 0.0 0.00 00.00 0.10 0.101 1e5 1e-5 1e50), '0 but true',
+  qw(00 01 .0 .1 0.0 0.00 00.00 0.10 0.101),
+  '0 but true',
+  '0e0',
+  (map +("1e$_", "-1e$_"), -50, -5, 0, 1, 5, 50),
   (map 1 / $_, -10 .. -2, 2 .. 10),
   (INF_NAN_SUPPORT ? ( INF, -(INF), NAN, -(NAN) ) : ()),
 );
@@ -178,7 +181,12 @@ for my $value (_uniq @quotify) {
     if (is_numeric($value)) {
       if ($value == $value) {
         cmp_ok $check_value, '==', $value,
-          "$value_name: numeric value maintained$suffix";
+          "$value_name: numeric value maintained$suffix"
+          or do {
+            diag "quotified as $quoted";
+            diag "got float      : ".uc unpack("h*", pack("F", $check_value));
+            diag "expected float : ".uc unpack("h*", pack("F", $value));
+          };
       }
       else {
         cmp_ok $check_value, '!=', $check_value,

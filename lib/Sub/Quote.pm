@@ -61,9 +61,13 @@ sub quotify {
     : $value == -9**9**9 ? '(-9**9**9)'    # -inf
     : int($value) == $value ? $value       # integer
     : do {
-      my $float = sprintf('%.'._MAX_FLOAT_PRECISION.'f', $value);
-      $float =~ s/(\.[0-9]+?)0+\z/$1/;
-      $float;
+      my $float = $value;
+      for my $precision (0 .. _MAX_FLOAT_PRECISION) {
+        $float = sprintf '%.'.$precision.'g', $value;
+        last
+          if $float == $value;
+      }
+      "$float";
     }
   )
   : !length($value) && length( (my $dummy2 = '') & $value ) ? '(!1)' # false

@@ -1,5 +1,17 @@
 Revision history for Sub::Quote
 
+  - change quotify of NaNs to simpler calculation
+  - avoid ever triggering exceptions when testing for quotify on false values
+  - skip quotify Inf and NaN tests if perl is compiled without support for
+    them
+  - fix quotify of very large or very small numbers
+  - fix accuracy of quotify on high precision numbers when perl is compiled
+    with quadmath
+  - quotify will use hex floats when needed for full accuracy if they are
+    available
+  - change tests of quotify for floating point numbers to allow a small amount
+    of inaccuracy, since decimal floats can't always be accurate
+
 2.006003 - 2019-03-10
   - releasing as stable
 

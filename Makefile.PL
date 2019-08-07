@@ -51,6 +51,7 @@ my %META = (
 
 my %MM_ARGS = (
   PREREQ_PM => {
+    'XString' => '0.005',
     ("$]" >= 5.008_000 ? () : ('Task::Weaken' => 0)),
   },
 );

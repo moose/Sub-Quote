@@ -14,6 +14,9 @@ use constant MAX_FLOAT_PRECISION => Sub::Quote::_MAX_FLOAT_PRECISION;
 use constant HAVE_HEX_FLOAT      => Sub::Quote::_HAVE_HEX_FLOAT;
 use constant INF => 9**9**9;
 use constant NAN => sin(INF);
+use constant MAXUINT => ~0;
+use constant MAXINT  => ~0 >> 1;
+use constant MININT  => -(~0 >> 1) - 1;
 use constant INF_NAN_SUPPORT => (
   INF == 10 * INF
   and !(NAN == 0 || NAN == 0.1 || NAN + 0 == 0)
@@ -102,14 +105,30 @@ sub eval_utf8 {
 
 my @numbers = (
   -20 .. 20,
+  -0.0,
   qw(00 01 .0 .1 0.0 0.00 00.00 0.10 0.101),
   '0 but true',
   '0e0',
   (map +("1e$_", "-1e$_"), -50, -5, 0, 1, 5, 50),
   (map 1 / $_, -10 .. -2, 2 .. 10),
+  (map +(1 / 9) * $_, -9 .. -1, 1 .. 9),
   (map $_ x 100, 1 .. 9),
   3.14159265358979323846264338327950288419716939937510,
   2.71828182845904523536028747135266249775724709369995,
+  sqrt(2),
+  1.4142135623730951,
+  1.4142135623730954,
+  sqrt(3),
+  1.7320508075688772935274463415058722,
+  1.73205080756887729352744634150587224,
+  sqrt(5),
+  2.2360679774997896963,
+  2.23606797749978969634,
+  MAXUINT,
+  MAXUINT-1,
+  MAXINT,
+  MAXINT+1,
+  MININT,
   (INF_NAN_SUPPORT ? ( INF, -(INF), NAN, -(NAN) ) : ()),
 );
 

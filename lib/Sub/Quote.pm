@@ -63,6 +63,10 @@ sub quotify {
     : $value == 0 ? (
       sprintf('%g', $value) eq '-0' ? '-0.0' : '0',
     )
+    : $value !~ /[e.]/i ? (
+      $value > 0 ? (sprintf '%u', $value)
+                 : (sprintf '%d', $value)
+    )
     : do {
       my $float = $value;
       for my $precision (0 .. _MAX_FLOAT_PRECISION) {

@@ -22,7 +22,7 @@ BEGIN {
 }
 
 our $VERSION = '2.006_004';
-$VERSION = eval $VERSION;
+$VERSION =~ tr/_//d;
 
 our @EXPORT = qw(quote_sub unquote_sub quoted_from_sub qsub);
 our @EXPORT_OK = qw(quotify capture_unroll inlinify sanitize_identifier);

@@ -4,6 +4,9 @@ no warnings 'once';
 use Test::More;
 use Data::Dumper;
 use B;
+BEGIN {
+  $ENV{SUB_QUOTE_NO_HEX_FLOAT} = $::SUB_QUOTE_NO_HEX_FLOAT ? 1 : 0;
+}
 
 use Sub::Quote qw(
   quotify

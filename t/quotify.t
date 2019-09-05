@@ -12,8 +12,8 @@ use Sub::Quote qw(
 use constant HAVE_UTF8           => Sub::Quote::_HAVE_IS_UTF8;
 use constant MAX_FLOAT_PRECISION => Sub::Quote::_MAX_FLOAT_PRECISION;
 use constant HAVE_HEX_FLOAT      => Sub::Quote::_HAVE_HEX_FLOAT;
-use constant INF => 9**9**9;
-use constant NAN => sin(INF);
+use constant INF => 9**9**9**9;
+use constant NAN => INF * 0;
 use constant MAXUINT => ~0;
 use constant MAXINT  => ~0 >> 1;
 use constant MININT  => -(~0 >> 1) - 1;
@@ -129,7 +129,10 @@ my @numbers = (
   MAXINT,
   MAXINT+1,
   MININT,
-  (INF_NAN_SUPPORT ? ( INF, -(INF), NAN, -(NAN) ) : ()),
+  (INF_NAN_SUPPORT ? (
+    INF, -(INF),
+    NAN, -(NAN),
+  ) : ()),
 );
 
 my @strings = (

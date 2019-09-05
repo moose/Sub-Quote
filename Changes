@@ -1,5 +1,8 @@
 Revision history for Sub::Quote
 
+  - additional fixes for quotify for floating point numbers to be faster and
+    should always be able to maintain accuracy
+
 2.006_004 - 2019-04-24
   - change quotify of NaNs to simpler calculation
   - avoid ever triggering exceptions when testing for quotify on false values

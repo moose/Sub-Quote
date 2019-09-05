@@ -85,13 +85,29 @@ sub quotify {
     )
     : do {
       my $float = $value;
-      for my $precision (_FLOAT_PRECISION .. _FLOAT_PRECISION+2) {
-        $float = sprintf '%.'.$precision.'g', $value;
-        last
-          if $float == $value;
-
-        if (_HAVE_HEX_FLOAT and $precision == _MAX_FLOAT_PRECISION) {
-          $float = sprintf "%a", $value;
+      my $max_factor = int( log( abs($value) ) / log(2) ) - _NVMANTBITS;
+      my $ex_sign = $max_factor > 0 ? 1 : -1;
+      FACTOR: for my $ex (0 .. abs($max_factor)) {
+        my $num = $value / 2**($ex_sign * $ex);
+        for my $precision (_FLOAT_PRECISION .. _FLOAT_PRECISION+2) {
+          my $formatted = sprintf '%.'.$precision.'g', $num;
+          if ($formatted == $num) {
+            $float = $formatted;
+            if ($ex) {
+              $float
+                .= ($ex_sign == 1 ? '*' : '/')
+                . (
+                  $ex > _NVMANTBITS
+                    ? "2**$ex"
+                    : sprintf('%u', 2**$ex)
+                );
+            }
+            last FACTOR;
+          }
+        }
+        if (_HAVE_HEX_FLOAT) {
+          $float = sprintf '%a', $value;
+          last FACTOR;
         }
       }
       "$float";

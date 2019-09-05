@@ -12,9 +12,9 @@ use Sub::Quote qw(
   quotify
 );
 
-use constant HAVE_UTF8           => Sub::Quote::_HAVE_IS_UTF8;
-use constant MAX_FLOAT_PRECISION => Sub::Quote::_MAX_FLOAT_PRECISION;
-use constant HAVE_HEX_FLOAT      => Sub::Quote::_HAVE_HEX_FLOAT;
+use constant HAVE_UTF8       => Sub::Quote::_HAVE_IS_UTF8;
+use constant FLOAT_PRECISION => Sub::Quote::_FLOAT_PRECISION;
+use constant HAVE_HEX_FLOAT  => Sub::Quote::_HAVE_HEX_FLOAT;
 use constant INF => 9**9**9**9;
 use constant NAN => INF * 0;
 use constant MAXUINT => ~0;
@@ -221,7 +221,7 @@ for my $value (_uniq @quotify) {
         if (!HAVE_HEX_FLOAT && $check_value != $value && is_float($value)) {
           my $diff = abs($check_value - $value);
           my $accuracy = abs($value)/$diff;
-          my $precision = MAX_FLOAT_PRECISION - 1;
+          my $precision = FLOAT_PRECISION + 1;
           $todo = "not always accurate beyond $precision digits"
             if $accuracy <= 10**$precision;
         }

@@ -17,8 +17,24 @@ BEGIN {
   *_BAD_BACKSLASH_ESCAPE = _HAVE_PERLSTRING() && "$]" == 5.010_000 ? sub(){1} : sub(){0};
   *_HAVE_HEX_FLOAT = !$ENV{SUB_QUOTE_NO_HEX_FLOAT} && "$]" >= 5.022 ? sub(){1} : sub(){0};
 
-  my $precision = length 1/9;
-  *_MAX_FLOAT_PRECISION = sub(){$precision};
+  # This may not be perfect, as we can't tell the format purely from the size
+  # but it should cover the common cases, and other formats are more likely to
+  # be less precise.
+  my $nvsize = 8 * length pack 'F', 0;
+  my $nvmantbits
+    = $nvsize == 16   ? 11
+    : $nvsize == 32   ? 24
+    : $nvsize == 64   ? 53
+    : $nvsize == 80   ? 64
+    : $nvsize == 128  ? 113
+    : $nvsize == 256  ? 237
+                      : 237 # unknown float format
+    ;
+  my $precision = int( log(2)/log(10)*$nvmantbits );
+
+  *_NVSIZE = sub(){$nvsize};
+  *_NVMANTBITS = sub(){$nvmantbits};
+  *_FLOAT_PRECISION = sub(){$precision};
 }
 
 our $VERSION = '2.006_004';
@@ -69,7 +85,7 @@ sub quotify {
     )
     : do {
       my $float = $value;
-      for my $precision (0 .. _MAX_FLOAT_PRECISION) {
+      for my $precision (_FLOAT_PRECISION .. _FLOAT_PRECISION+2) {
         $float = sprintf '%.'.$precision.'g', $value;
         last
           if $float == $value;

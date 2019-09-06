@@ -37,7 +37,7 @@ BEGIN {
   *_FLOAT_PRECISION = sub(){$precision};
 }
 
-our $VERSION = '2.006_004';
+our $VERSION = '2.006_005';
 $VERSION =~ tr/_//d;
 
 our @EXPORT = qw(quote_sub unquote_sub quoted_from_sub qsub);

@@ -1,5 +1,6 @@
 Revision history for Sub::Quote
 
+2.006_005 - 2019-09-06
   - additional fixes for quotify for floating point numbers to be faster and
     should always be able to maintain accuracy
 

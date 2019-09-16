@@ -534,9 +534,12 @@ arguments.
 
  my $quoted_value = quotify $value;
 
-Quotes a single (non-reference) scalar value for use in a code string.  Numbers
-aren't treated specially and will be quoted as strings, but undef will quoted as
-C<undef()>.
+Quotes a single (non-reference) scalar value for use in a code string.  The
+result should reproduce the original value, including strings, undef, integers,
+and floating point numbers.  The resulting floating point numbers (including
+infinites and not a number) should be precisely equal to the original, if
+possible.  The exact format of the resulting number should not be relied on, as
+it may include hex floats or math expressions.
 
 =head2 capture_unroll
 

@@ -91,11 +91,13 @@ sub quotify {
         my $num = $value / 2**($ex_sign * $ex);
         for my $precision (_FLOAT_PRECISION .. _FLOAT_PRECISION+2) {
           my $formatted = sprintf '%.'.$precision.'g', $num;
+          $float = $formatted
+            if $ex == 0;
           if ($formatted == $num) {
-            $float = $formatted;
             if ($ex) {
               $float
-                .= ($ex_sign == 1 ? '*' : '/')
+                = $formatted
+                . ($ex_sign == 1 ? '*' : '/')
                 . (
                   $ex > _NVMANTBITS
                     ? "2**$ex"

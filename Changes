@@ -1,5 +1,6 @@
 Revision history for Sub::Quote
 
+2.006006 - 2019-10-01
   - change quotify to use longest form of floating point numbers if unable to
     find a perfectly accurate representation
   - updated documentation for quotify to reflect handling of floating point

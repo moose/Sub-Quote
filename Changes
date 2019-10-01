@@ -1,5 +1,11 @@
 Revision history for Sub::Quote
 
+  - change quotify to use longest form of floating point numbers if unable to
+    find a perfectly accurate representation
+  - updated documentation for quotify to reflect handling of floating point
+    numbers
+  - don't try to copy hints hash entries that look like references (RT#122698)
+
 2.006_005 - 2019-09-06
   - additional fixes for quotify for floating point numbers to be faster and
     should always be able to maintain accuracy

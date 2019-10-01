@@ -268,6 +268,7 @@ sub _context {
       ."  \%^H = (\n"
       . join('', map
       "    ".quotify($_)." => ".quotify($hintshash->{$_}).",\n",
+        grep !(ref $hintshash->{$_} && $hintshash->{$_} =~ /\A(?:\w+(?:::\w+)*=)?[A-Z]+\(0x[[0-9a-fA-F]+\)\z/),
         keys %$hintshash)
       ."  );\n"
       ."}\n"

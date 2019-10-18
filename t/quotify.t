@@ -4,8 +4,11 @@ no warnings 'once';
 use Test::More;
 use Data::Dumper;
 use B;
+my $PERFECT;
 BEGIN {
-  $ENV{SUB_QUOTE_NO_HEX_FLOAT} = $::SUB_QUOTE_NO_HEX_FLOAT ? 1 : 0;
+  $PERFECT = grep $_ eq '--perfect', @ARGV;
+  my $no_hex = grep $_ eq '--no-hex', @ARGV;
+  $ENV{SUB_QUOTE_NO_HEX_FLOAT} = ($no_hex || $::SUB_QUOTE_NO_HEX_FLOAT) ? 1 : 0;
 }
 
 use Sub::Quote qw(
@@ -59,7 +62,7 @@ sub is_strict_numeric {
 }
 
 my %flags;
-{
+BEGIN {
   no strict 'refs';
   for my $flag (qw(
     SVs_TEMP
@@ -218,7 +221,7 @@ for my $value (_uniq @quotify) {
     if (is_numeric($value)) {
       if ($value == $value) {
         my $todo;
-        if (!HAVE_HEX_FLOAT && $check_value != $value && is_float($value)) {
+        if (!$PERFECT && !HAVE_HEX_FLOAT && $check_value != $value && is_float($value)) {
           my $diff = abs($check_value - $value);
           my $accuracy = abs($value)/$diff;
           my $precision = FLOAT_PRECISION + 1;

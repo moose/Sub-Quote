@@ -43,6 +43,14 @@ sub _dump {
   $d;
 }
 
+sub _is_diag {
+  my ($got, $expect) = map _dump($_), @_;
+  diag sprintf <<'END_DIAG', $got, $expect;
+         got: %s
+    expected: %s
+END_DIAG
+}
+
 sub is_numeric {
   my $flags = B::svref_2object(\($_[0]))->FLAGS;
   !!( $flags & ( B::SVp_IOK | B::SVp_NOK ) )
@@ -246,12 +254,14 @@ for my $value (_uniq @quotify) {
     }
 
     if (defined $value) {
-      cmp_ok $check_value, 'eq', $value,
-        "$value_name: string value maintained$suffix";
+      ok $check_value eq $value,
+        "$value_name: string value maintained$suffix"
+        or _is_diag($check_value, $value);
     }
     else {
       is $check_value, undef,
-        "$value_name: undef maintained$suffix";
+        "$value_name: undef maintained$suffix"
+        or _is_diag($check_value, $value);
     }
   }
 }

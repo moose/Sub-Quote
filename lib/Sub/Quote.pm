@@ -5,6 +5,9 @@ sub _clean_eval { eval $_[0] }
 use strict;
 use warnings;
 
+our $VERSION = '2.006006';
+$VERSION =~ tr/_//d;
+
 use Sub::Defer qw(defer_sub);
 use Scalar::Util qw(weaken);
 use Exporter qw(import);
@@ -36,9 +39,6 @@ BEGIN {
   *_NVMANTBITS = sub(){$nvmantbits};
   *_FLOAT_PRECISION = sub(){$precision};
 }
-
-our $VERSION = '2.006006';
-$VERSION =~ tr/_//d;
 
 our @EXPORT = qw(quote_sub unquote_sub quoted_from_sub qsub);
 our @EXPORT_OK = qw(quotify capture_unroll inlinify sanitize_identifier);

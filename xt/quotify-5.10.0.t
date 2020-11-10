@@ -1,5 +1,5 @@
 use strict;
 use warnings;
 no warnings 'once';
-unshift @ARGV, '--no-hex';
+unshift @ARGV, '--5_10_0';
 do './t/quotify.t' or die $@ || $!;

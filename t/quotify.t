@@ -1,19 +1,63 @@
 use strict;
 use warnings;
 no warnings 'once';
-use Test::More;
-use Data::Dumper;
-use B;
-my $PERFECT;
+my %opts;
 BEGIN {
-  $PERFECT = grep $_ eq '--perfect', @ARGV;
-  my $no_hex = grep $_ eq '--no-hex', @ARGV;
-  $ENV{SUB_QUOTE_NO_HEX_FLOAT} = ($no_hex || $::SUB_QUOTE_NO_HEX_FLOAT) ? 1 : 0;
+  for my $arg (@ARGV) {
+    if ($arg =~ /\A--(perfect|5_10_0|5_6|no-hex|b-perlstring|no-xstring)\z/) {
+      $opts{$1} = 1;
+    }
+    else {
+      die "Invalid option: $arg\n";
+    }
+  }
+
+  $ENV{SUB_QUOTE_NO_HEX_FLOAT} = 0+!!$opts{'no-hex'};
+
+  {
+    my $v;
+
+    $opts{'5_6'} || $opts{'5_10_0'} || $opts{'no-xstring'} and
+      (eval { require XString }),
+      (local $XString::VERSION = '0.001'),
+    ;
+
+    $opts{'5_6'} and
+      (require B),
+      (local $B::{perlstring}),
+      (local $utf8::{is_utf8}),
+      ($v = 5.006),
+    ;
+
+    $opts{'5_10_0'} and
+      ($v = 5.010000),
+    ;
+
+    $opts{'b-perlstring'} and
+      (require B),
+    ;
+
+    $v and
+      ($v = sprintf "%.6f", $v),
+      (my $t = $v + 0),
+      (Internals::SvREADONLY($], 0)),
+      (local $] = $v),
+      (Internals::SvREADONLY($], 1)),
+    ;
+
+    require Sub::Quote;
+  }
+
+  Internals::SvREADONLY($], 1);
 }
 
 use Sub::Quote qw(
   quotify
 );
+
+use Test::More;
+use Data::Dumper;
+use B;
 
 use constant HAVE_UTF8       => Sub::Quote::_HAVE_IS_UTF8;
 use constant FLOAT_PRECISION => Sub::Quote::_FLOAT_PRECISION;
@@ -229,7 +273,7 @@ for my $value (_uniq @quotify) {
     if (is_numeric($value)) {
       if ($value == $value) {
         my $todo;
-        if (!$PERFECT && !HAVE_HEX_FLOAT && $check_value != $value && is_float($value)) {
+        if (!$opts{perfect} && !HAVE_HEX_FLOAT && $check_value != $value && is_float($value)) {
           my $diff = abs($check_value - $value);
           my $accuracy = abs($value)/$diff;
           my $precision = FLOAT_PRECISION + 1;

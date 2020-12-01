@@ -10,7 +10,8 @@ $VERSION =~ tr/_//d;
 
 use Sub::Defer qw(defer_sub);
 use Scalar::Util qw(weaken);
-use Exporter qw(import);
+use Exporter ();
+BEGIN { *import = \&Exporter::import }
 use Carp qw(croak);
 BEGIN { our @CARP_NOT = qw(Sub::Defer) }
 use B ();

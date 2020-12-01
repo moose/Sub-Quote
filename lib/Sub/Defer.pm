@@ -5,7 +5,8 @@ use warnings;
 our $VERSION = '2.006006';
 $VERSION =~ tr/_//d;
 
-use Exporter qw(import);
+use Exporter ();
+BEGIN { *import = \&Exporter::import }
 use Scalar::Util qw(weaken);
 use Carp qw(croak);
 

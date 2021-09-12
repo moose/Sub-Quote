@@ -18,6 +18,7 @@ use B ();
 BEGIN {
   *_HAVE_IS_UTF8 = defined &utf8::is_utf8 ? sub(){1} : sub(){0};
   *_HAVE_PERLSTRING = defined &B::perlstring ? sub(){1} : sub(){0};
+  *_HAVE_CORE_BOOLEANS = do { local $@; eval { Scalar::Util::isbool(1) } } ? sub(){1} : sub(){0};
   *_BAD_BACKSLASH_ESCAPE = _HAVE_PERLSTRING() && "$]" == 5.010_000 ? sub(){1} : sub(){0};
   *_HAVE_HEX_FLOAT = !$ENV{SUB_QUOTE_NO_HEX_FLOAT} && "$]" >= 5.022 ? sub(){1} : sub(){0};
 
@@ -66,6 +67,9 @@ sub quotify {
   no warnings 'numeric';
   ! defined $value     ? 'undef()'
   # numeric detection
+  : _HAVE_CORE_BOOLEANS && Scalar::Util::isbool($value) ? (
+    $value ? '(!!1)' : '(!!0)'
+  )
   : (!(_HAVE_IS_UTF8 && utf8::is_utf8($value))
     && length( (my $dummy = '') & $value )
     && 0 + $value eq $value
@@ -116,7 +120,7 @@ sub quotify {
       "$float";
     }
   )
-  : !length($value) && length( (my $dummy2 = '') & $value ) ? '(!1)' # false
+  : !length($value) && length( (my $dummy2 = '') & $value ) ? '(!!0)' # false
   : _BAD_BACKSLASH_ESCAPE && _HAVE_IS_UTF8 && utf8::is_utf8($value) ? do {
     $value =~ s/(["\$\@\\[:cntrl:]]|[^\x00-\x7f])/
       $escape{$1} || sprintf('\x{%x}', ord($1))

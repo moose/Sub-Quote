@@ -63,6 +63,17 @@ sub is_float {
   || $num < -(~0>>1)-1;
 }
 
+sub is_bool {
+  my $bool = shift;
+  if (is_numeric($bool) && $bool == 0 && $bool eq '') {
+    return !!1;
+  }
+  else {
+    # can't detect true
+    return !!0;
+  }
+}
+
 sub is_strict_numeric {
   my $flags = B::svref_2object(\($_[0]))->FLAGS;
 
@@ -197,7 +208,8 @@ for my $value (_uniq @quotify) {
     = _dump($value)
     . (HAVE_UTF8 && utf8::is_utf8($value) ? ' utf8' : '')
     . (is_strict_numeric($value) ? ' pure' : '')
-    . (is_numeric($value) ? ' num' : '');
+    . (is_numeric($value) ? ' num' : '')
+    . (is_bool($value) ? ' bool' : '');
 
   my $quoted = quotify(my $copy = $value);
   utf8::downgrade($quoted, 1)

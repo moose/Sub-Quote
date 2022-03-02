@@ -16,11 +16,13 @@ use Carp qw(croak);
 BEGIN { our @CARP_NOT = qw(Sub::Defer) }
 use B ();
 BEGIN {
-  *_HAVE_IS_UTF8 = defined &utf8::is_utf8 ? sub(){1} : sub(){0};
-  *_HAVE_PERLSTRING = defined &B::perlstring ? sub(){1} : sub(){0};
-  *_HAVE_CORE_BOOLEANS = do { local $@; eval { Scalar::Util::isbool(1) } } ? sub(){1} : sub(){0};
-  *_BAD_BACKSLASH_ESCAPE = _HAVE_PERLSTRING() && "$]" == 5.010_000 ? sub(){1} : sub(){0};
-  *_HAVE_HEX_FLOAT = !$ENV{SUB_QUOTE_NO_HEX_FLOAT} && "$]" >= 5.022 ? sub(){1} : sub(){0};
+  my $TRUE  = sub(){!!1};
+  my $FALSE = sub(){!!0};
+  *_HAVE_IS_UTF8          = defined &utf8::is_utf8 ? $TRUE : $FALSE;
+  *_HAVE_PERLSTRING       = defined &B::perlstring ? $TRUE : $FALSE;
+  *_CAN_TRACK_BOOLEANS    = defined &builtin::is_bool ? $TRUE : $FALSE;
+  *_BAD_BACKSLASH_ESCAPE  = _HAVE_PERLSTRING() && "$]" == 5.010_000 ? $TRUE : $FALSE;
+  *_HAVE_HEX_FLOAT        = !$ENV{SUB_QUOTE_NO_HEX_FLOAT} && "$]" >= 5.022 ? $TRUE : $FALSE;
 
   # This may not be perfect, as we can't tell the format purely from the size
   # but it should cover the common cases, and other formats are more likely to
@@ -65,12 +67,17 @@ if (_BAD_BACKSLASH_ESCAPE) {
 sub quotify {
   my $value = $_[0];
   no warnings 'numeric';
+  BEGIN {
+    warnings->unimport(qw(experimental::builtin))
+      if _CAN_TRACK_BOOLEANS;
+  }
   ! defined $value     ? 'undef()'
-  # numeric detection
-  : _HAVE_CORE_BOOLEANS && Scalar::Util::isbool($value) ? (
+  : _CAN_TRACK_BOOLEANS && builtin::is_bool($value) ? (
     $value ? '(!!1)' : '(!!0)'
   )
-  : (!(_HAVE_IS_UTF8 && utf8::is_utf8($value))
+  # numeric detection
+  : (
+    !(_HAVE_IS_UTF8 && utf8::is_utf8($value))
     && length( (my $dummy = '') & $value )
     && 0 + $value eq $value
   ) ? (
@@ -120,7 +127,7 @@ sub quotify {
       "$float";
     }
   )
-  : !length($value) && length( (my $dummy2 = '') & $value ) ? '(!!0)' # false
+  : !_CAN_TRACK_BOOLEANS && !length($value) && length( (my $dummy2 = '') & $value ) ? '(!!0)' # false
   : _BAD_BACKSLASH_ESCAPE && _HAVE_IS_UTF8 && utf8::is_utf8($value) ? do {
     $value =~ s/(["\$\@\\[:cntrl:]]|[^\x00-\x7f])/
       $escape{$1} || sprintf('\x{%x}', ord($1))

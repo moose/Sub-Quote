@@ -18,6 +18,7 @@ use Sub::Quote qw(
 use constant HAVE_UTF8       => Sub::Quote::_HAVE_IS_UTF8;
 use constant FLOAT_PRECISION => Sub::Quote::_FLOAT_PRECISION;
 use constant HAVE_HEX_FLOAT  => Sub::Quote::_HAVE_HEX_FLOAT;
+use constant CAN_TRACK_BOOLEANS => Sub::Quote::_CAN_TRACK_BOOLEANS;
 use constant INF => 9**9**9**9;
 use constant NAN => INF * 0;
 use constant MAXUINT => ~0;
@@ -73,12 +74,18 @@ die "ASSERT: is_float broken for floats"
 
 sub is_bool {
   my $bool = shift;
-  if (is_numeric($bool) && $bool == 0 && $bool eq '') {
-    return !!1;
+  if (CAN_TRACK_BOOLEANS) {
+    BEGIN { CAN_TRACK_BOOLEANS && warnings->unimport(qw(experimental::builtin)) }
+    return builtin::is_bool($bool);
   }
   else {
-    # can't detect true
-    return !!0;
+    if (is_numeric($bool) && $bool == 0 && $bool eq '') {
+      return !!1;
+    }
+    else {
+      # can't detect true
+      return !!0;
+    }
   }
 }
 die "ASSERT: is_bool broken for integers"
@@ -88,7 +95,7 @@ die "ASSERT: is_bool broken for floats"
 die "ASSERT: is_bool broken for strings"
   if is_bool("1") || is_bool("0");
 die "ASSERT: is_bool broken for booleans"
-  if !is_bool(!!0);
+  if !is_bool(!!0) || (CAN_TRACK_BOOLEANS && !is_bool(!!1));
 
 
 sub is_strict_numeric {

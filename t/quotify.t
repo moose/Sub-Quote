@@ -55,6 +55,10 @@ sub is_numeric {
   my $flags = B::svref_2object(\($_[0]))->FLAGS;
   !!( $flags & ( B::SVp_IOK | B::SVp_NOK ) )
 }
+die "ASSERT: is_numeric broken for numbers"
+  if !is_numeric(1);
+die "ASSERT: is_numeric broken for strings"
+  if is_numeric("1");
 
 sub is_float {
   my $num = shift;
@@ -62,6 +66,10 @@ sub is_float {
   || $num > ~0
   || $num < -(~0>>1)-1;
 }
+die "ASSERT: is_float broken for integers"
+  if is_float(1);
+die "ASSERT: is_float broken for floats"
+  if !is_float(1.1);
 
 sub is_bool {
   my $bool = shift;
@@ -73,6 +81,15 @@ sub is_bool {
     return !!0;
   }
 }
+die "ASSERT: is_bool broken for integers"
+  if is_bool(1) || is_bool(0);
+die "ASSERT: is_bool broken for floats"
+  if is_bool(1.0);
+die "ASSERT: is_bool broken for strings"
+  if is_bool("1") || is_bool("0");
+die "ASSERT: is_bool broken for booleans"
+  if !is_bool(!!0);
+
 
 sub is_strict_numeric {
   my $flags = B::svref_2object(\($_[0]))->FLAGS;

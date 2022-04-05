@@ -21,6 +21,7 @@ BEGIN {
   *_HAVE_IS_UTF8          = defined &utf8::is_utf8 ? $TRUE : $FALSE;
   *_HAVE_PERLSTRING       = defined &B::perlstring ? $TRUE : $FALSE;
   *_CAN_TRACK_BOOLEANS    = defined &builtin::is_bool ? $TRUE : $FALSE;
+  *_CAN_TRACK_NUMBERS     = defined &builtin::created_as_number ? $TRUE : $FALSE;
   *_BAD_BACKSLASH_ESCAPE  = _HAVE_PERLSTRING() && "$]" == 5.010_000 ? $TRUE : $FALSE;
   *_HAVE_HEX_FLOAT        = !$ENV{SUB_QUOTE_NO_HEX_FLOAT} && "$]" >= 5.022 ? $TRUE : $FALSE;
 
@@ -69,7 +70,7 @@ sub quotify {
   no warnings 'numeric';
   BEGIN {
     warnings->unimport(qw(experimental::builtin))
-      if _CAN_TRACK_BOOLEANS;
+      if _CAN_TRACK_BOOLEANS || _CAN_TRACK_NUMBERS;
   }
   ! defined $value     ? 'undef()'
   : _CAN_TRACK_BOOLEANS && builtin::is_bool($value) ? (
@@ -77,9 +78,13 @@ sub quotify {
   )
   # numeric detection
   : (
-    !(_HAVE_IS_UTF8 && utf8::is_utf8($value))
-    && length( (my $dummy = '') & $value )
-    && 0 + $value eq $value
+    _CAN_TRACK_NUMBERS
+      ? builtin::created_as_number($value)
+      : (
+        !(_HAVE_IS_UTF8 && utf8::is_utf8($value))
+        && length( (my $dummy = '') & $value )
+        && 0 + $value eq $value
+      )
   ) ? (
     $value != $value ? (
       $value eq (9**9**9*0)

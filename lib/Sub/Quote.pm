@@ -5,7 +5,7 @@ sub _clean_eval { eval $_[0] }
 use strict;
 use warnings;
 
-our $VERSION = '2.006006';
+our $VERSION = '2.006_007';
 $VERSION =~ tr/_//d;
 
 use Sub::Defer qw(defer_sub);

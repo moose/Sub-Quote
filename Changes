@@ -1,5 +1,9 @@
 Revision history for Sub::Quote
 
+  - accurately detect numbers vs strings in quotify on perl 5.36
+  - accurately detect booleans in quotify on perl 5.36
+  - add workaround for float formatting for perls compiled to use gcvd
+
 2.006006 - 2019-10-01
   - change quotify to use longest form of floating point numbers if unable to
     find a perfectly accurate representation

@@ -22,7 +22,7 @@ my %META = (
         'perl'                      => 5.006,
       },
       recommends => {
-        'Sub::Name'                 => 0.08,
+        'Sub::Util'                 => 0,
       },
     },
     develop   => {

@@ -1,5 +1,6 @@
 Revision history for Sub::Quote
 
+2.006_007 - 2022-04-05
   - accurately detect numbers vs strings in quotify on perl 5.36
   - accurately detect booleans in quotify on perl 5.36
   - add workaround for float formatting for perls compiled to use gcvd

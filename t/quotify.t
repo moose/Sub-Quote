@@ -211,10 +211,15 @@ my @quotify = (
   undef,
   @booleans,
   (map {
-    my $indeterminate = $_;
-    my $number = $indeterminate + 0;
-    my $string = $indeterminate . "";
-    ($number, $indeterminate, $string);
+    my $number = $_;
+    $number += 0;
+    my $string = $_;
+    $string .= "";
+    my $started_as_number = $number;
+    my $void = $started_as_number . "";
+    my $started_as_string = $string;
+    $void = $started_as_string + 0;
+    ($number, $started_as_number, $string, $started_as_string);
   } @numbers),
   @strings,
   @utf8_strings,

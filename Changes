@@ -1,5 +1,6 @@
 Revision history for Sub::Quote
 
+2.006008 - 2023-01-20
   - drop Test::Fatal prereq
   - recommend Sub::Util rather than Sub::Name
   - use XString for quoting strings where possible

@@ -45,7 +45,7 @@ my %META = (
   no_index => {
     directory => [ 't', 'xt' ]
   },
-  x_authority => 'cpan:MSTROUT',
+  x_authority => 'cpan:HAARG',
 );
 
 my %MM_ARGS = (

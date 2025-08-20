@@ -26,7 +26,7 @@ jobs:
       - id: perl-images
         uses: actions/github-script@v7
         env:
-          PERL_VERSIONS: ${{ toJSON(steps.perl-versions.outputs.perl-versions) }}
+          PERL_VERSIONS: ${{ steps.perl-versions.outputs.perl-versions }}
         with:
           script: |
             const perl_versions = JSON.parse(process.env.PERL_VERSIONS);

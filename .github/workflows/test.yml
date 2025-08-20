@@ -4,11 +4,11 @@ on:
   pull_request: ~
 
 jobs:
-  perl-versions:
+  perl-images:
     runs-on: ubuntu-latest
-    name: Calculate Perl Versions
+    name: Calculate Perl Images
     outputs:
-      versions: ${{ steps.perl-versions.outputs.perl-versions }}
+      images: ${{ steps.perl-images.outputs.result }}
     steps:
       - uses: actions/checkout@v4
       - name: Extract perl dependecy
@@ -22,6 +22,24 @@ jobs:
         with:
           since-perl: ${{ steps.prereqs.outputs.perl }}
           with-devel: true
+      - id: perl-images
+        uses: actions/github-script@v7
+        env:
+          PERL_VERSIONS: ${{ steps.perl-versions.outputs.versions }}
+        with:
+          script: |
+            const perl_versions = JSON.parse(process.env.PERL_VERSIONS);
+            return perl_versions.map((v) => {
+              const res = v.match(/^5\.(\d+)$/);
+              let suffix = '';
+              if (res) {
+                const [, minor] = res;
+                if (minor < 26) {
+                  suffix = '-buster';
+                }
+              }
+              return `perl:${v}${suffix}`;
+            });
 
   build:
     runs-on: ubuntu-latest
@@ -61,11 +79,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        perl-version: ${{ fromJson(needs.perl-versions.outputs.versions) }}
+        image: ${{ fromJSON(needs.perl-images.outputs.images) }}
 
     runs-on: ubuntu-latest
     container:
-      image: perl:${{ matrix.perl-version }}
+      image: perl:${{ matrix.image }}
 
     env:
       AUTOMATED_TESTING: 1
@@ -79,7 +97,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/.perl-cpm
-          key: cpm-perl:${{ matrix.perl-version }}
+          key: cpm-${{ matrix.image }}
       - name: Setup local::lib
         run: |
           echo "$RUNNER_TEMP/perl5/bin" >> "$GITHUB_PATH"
@@ -121,7 +139,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: perl:5.36-buster
+      image: perl:5.36
 
     env:
       AUTOMATED_TESTING: 1
@@ -134,7 +152,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/.perl-cpm
-          key: cpm-perl:5.36-buster
+          key: cpm-perl:5.36
       - name: Setup local::lib
         run: |
           echo "$RUNNER_TEMP/perl5/bin" >> "$GITHUB_PATH"

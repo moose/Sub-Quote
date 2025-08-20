@@ -65,7 +65,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: perl:${{ matrix.perl-version }}-buster
+      image: perl:${{ matrix.perl-version }}
 
     env:
       AUTOMATED_TESTING: 1
@@ -79,7 +79,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/.perl-cpm
-          key: cpm-perl:${{ matrix.perl-version }}-buster
+          key: cpm-perl:${{ matrix.perl-version }}
       - name: Setup local::lib
         run: |
           echo "$RUNNER_TEMP/perl5/bin" >> "$GITHUB_PATH"

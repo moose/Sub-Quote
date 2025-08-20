@@ -29,7 +29,7 @@ jobs:
           PERL_VERSIONS: ${{ toJSON(steps.perl-versions.outputs.perl-versions) }}
         with:
           script: |
-            const perl_versions = JSON.parse(process.env.PERL_VERSIONS);
+            const perl_versions = [...JSON.parse(process.env.PERL_VERSIONS)];
             const images = perl_versions.map((v) => {
               const res = v.match(/^5\.(\d+)$/);
               let suffix = '';
@@ -43,7 +43,7 @@ jobs:
             });
             return {
               images,
-              'last-image': images[images.length - 1],
+              'last-image': images.findLast(i => i.match(/^perl:5/)),
             };
 
   build:

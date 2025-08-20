@@ -43,7 +43,7 @@ jobs:
             });
             return {
               images,
-              last-image: images[images.length - 1],
+              'last-image': images[images.length - 1],
             };
 
   build:

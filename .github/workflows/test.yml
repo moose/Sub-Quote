@@ -8,7 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Calculate Perl Images
     outputs:
-      images: ${{ steps.perl-images.outputs.result }}
+      images: ${{ toJSON(fromJSON(steps.perl-images.outputs.result).images) }}
+      last-image: ${{ fromJSON(steps.perl-images.outputs.result).last-image }}
     steps:
       - uses: actions/checkout@v4
       - name: Extract perl dependecy
@@ -29,7 +30,7 @@ jobs:
         with:
           script: |
             const perl_versions = JSON.parse(process.env.PERL_VERSIONS);
-            return perl_versions.map((v) => {
+            const images = perl_versions.map((v) => {
               const res = v.match(/^5\.(\d+)$/);
               let suffix = '';
               if (res) {
@@ -40,6 +41,10 @@ jobs:
               }
               return `perl:${v}${suffix}`;
             });
+            return {
+              images,
+              last-image: images[images.length - 1],
+            };
 
   build:
     runs-on: ubuntu-latest
@@ -73,7 +78,7 @@ jobs:
 
   test:
     needs:
-      - perl-versions
+      - perl-images
       - build
 
     strategy:
@@ -83,7 +88,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: perl:${{ matrix.image }}
+      image: ${{ matrix.image }}
 
     env:
       AUTOMATED_TESTING: 1
@@ -134,12 +139,12 @@ jobs:
 
   test-xt:
     needs:
-      - perl-versions
+      - perl-images
       - build
 
     runs-on: ubuntu-latest
     container:
-      image: perl:5.36
+      image: ${{ needs.perl-images.outputs.last-image }}
 
     env:
       AUTOMATED_TESTING: 1

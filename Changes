@@ -1,5 +1,9 @@
 Revision history for Sub::Quote
 
+  - fix new warning for bare \ in qw()
+  - fix documentation for hintshash option
+  - fix author tests with newer perl versions
+
 2.006008 - 2023-01-20
   - drop Test::Fatal prereq
   - recommend Sub::Util rather than Sub::Name
